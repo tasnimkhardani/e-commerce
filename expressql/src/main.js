@@ -8,11 +8,9 @@ app.use(express.json());
 const port = process.env.PORT || 4000;
 
 const userRouter = require('./routes/user')
-const productRouter = require('./routes/product')
 
 
 app.use('/user',userRouter)
-app.use('/product',productRouter)
 
 app.listen(port, () =>
   console.log(`🚀 Server ready at: http://localhost:${port}`)

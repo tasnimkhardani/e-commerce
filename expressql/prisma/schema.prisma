@@ -7,28 +7,78 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String
-  role      Role     @default(USER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Utilisateur {
+  id           Int       @id @default(autoincrement())
+  nom          String    @unique
+  prenom       String    @unique
+  email        String    @unique
+  motdepass    String    // Typo corrected from `0String` to `String`
+  telephone    Int?      @unique
+  isEnable     Boolean   @default(true) // Defaulting to true unless specified otherwise
+  role         Role      @default(CANDIDAT) // Default role set to CANDIDAT
 
-  product Product[]
+
+  sujetsPFE    SujetPFE[]
+  commentaires Commentaire[]
+  taches       Tache[]
+  candidatures Candidature[]
+  avancements  Avancement[]
 }
 
 enum Role {
-  USER
+  CANDIDAT
+  ENCADRANT
   ADMIN
-  BOUTIQUE
 }
 
-model Product {
-  id          Int    @id @default(autoincrement())
-  name        String
-  description String
+model SujetPFE {
+  id          Int       @id @default(autoincrement())
+  titre       String
+  description String?
 
-  User   User? @relation(fields: [userId], references: [id])
-  userId Int?
+  // Relationships
+  utilisateur Utilisateur? @relation(fields: [userId], references: [id])
+  userId      Int?
+}
+
+model Commentaire {
+  id          Int       @id @default(autoincrement())
+  date        DateTime  @default(now())
+  contenu     String
+
+  // Relationships
+  utilisateur Utilisateur? @relation(fields: [userId], references: [id])
+  userId      Int?
+}
+
+model Tache {
+  id            Int       @id @default(autoincrement())
+  name          String
+  description   String?
+  deadline      String
+  valideTache   Boolean?
+
+  // Relationships
+  utilisateur   Utilisateur? @relation(fields: [userId], references: [id])
+  userId        Int?
+}
+
+model Candidature {
+  id                 Int       @id @default(autoincrement())
+  lettreMotivation   String
+  statut             String
+  cv                 String
+
+  // Relationships
+  utilisateur        Utilisateur? @relation(fields: [userId], references: [id])
+  userId             Int?
+}
+
+model Avancement {
+  id          Int       @id @default(autoincrement())
+  valideStage Boolean
+
+  // Relationships
+  utilisateur Utilisateur? @relation(fields: [userId], references: [id])
+  userId      Int?
 }
